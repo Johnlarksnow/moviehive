@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Streaming</title>
+    <style>
+        #latest-movies .movie-card {
+            display: inline-block;
+            margin: 10px;
+        }
+        #latest-movies img {
+            max-width: 150px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Search Movies</h2>
+<div>
+    <input type="text" id="search-input" placeholder="Search for movies..." />
+    <button onclick="searchMovies()">Search</button>
+</div>
+
+<h3>Search Results</h3>
+<ul id="results-list"></ul>
+
+<h3>Latest Movies</h3>
+<div id="latest-movies"></div>
+
+<script>
+    const TMDB_API_KEY = 'c9cbc16ed2cc92ee656d643c52f8c6a1';  // Replace with your TMDB API Key
+
+    async function searchMovies() {
+        const query = document.getElementById('search-input').value;
+        
+        // Query TMDB for the search results
+        const response = await fetch(`https://api.themoviedb.org/3/search/movie?api_key=${TMDB_API_KEY}&query=${query}`);
+        const data = await response.json();
+        
+        displaySearchResults(data.results);
+    }
+
+    function displaySearchResults(movies) {
+        const resultsList = document.getElementById('results-list');
+        resultsList.innerHTML = '';  // Clear existing results
+
+        for (const movie of movies) {
+            const listItem = document.createElement('li');
+            const movieURL = `movie.html?id=${movie.id}`;
+            listItem.innerHTML = `<a href="${movieURL}">${movie.title} (${movie.release_date.split('-')[0]})</a>`;
+            resultsList.appendChild(listItem);
+        }
+    }
+
+    async function fetchLatestMovies() {
+        try {
+            const response = await fetch('/latest-movies');
+            const movies = await response.json();
+
+            console.log("Fetched movies:", movies);
+
+            let moviesHTML = '';
+            movies.forEach(movie => {
+                // Check if the movie has a poster before displaying it.
+                if (movie.poster_path) {
+                    moviesHTML += `
+                        <a href="movie.html?id=${movie.tmdb_id || movie.imdb_id}">
+                            <div class="movie-card">
+                                <img src="${movie.poster_path}" alt="${movie.title}" title="${movie.title}">
+                            </div>
+                        </a>`;
+                }
+            });
+
+            document.getElementById('latest-movies').innerHTML = moviesHTML;
+        } catch (error) {
+            console.error('Failed to fetch latest movies', error);
+        }
+    }
+
+    fetchLatestMovies();
+</script>
+
+</body>
+</html>

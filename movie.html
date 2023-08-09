@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Player</title>
+    <style>
+        #movie-iframe {
+            width: 100%;
+            height: 500px; /* adjust this value as needed */
+            border: none;
+            margin: 20px 0;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Iframe for Embedded Movie Player -->
+    <iframe id="movie-iframe"></iframe>
+
+    <!-- JavaScript to Set the Iframe Source -->
+    <script>
+        window.onload = function() {
+            // Parse the ID from the URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const movieId = urlParams.get('id');
+
+            // Set the iframe source based on the movie ID
+            const iframeUrl = `https://vidsrc.to/embed/movie/${movieId}`;
+            document.getElementById('movie-iframe').src = iframeUrl;
+        }
+    </script>
+</body>
+</html>
